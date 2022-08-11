@@ -17,13 +17,13 @@ public class LevelConfigurator : MonoBehaviour
     [SerializeField] GameObject segmentPrefab;
 
     [SerializeField] List<Segment> segments = new List<Segment>();
-    private List<GameObject> segmentObjects = new List<GameObject>();
+    [SerializeField]private List<GameObject> segmentObjects = new List<GameObject>();
 
     private Transform finishObject;
 
     private IEnumerator DestroySegmentObject(int i)
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSecondsRealtime(.0001f);
         DestroyImmediate(segmentObjects[i]);
         segmentObjects.RemoveAt(i);
         yield break; 
@@ -31,19 +31,21 @@ public class LevelConfigurator : MonoBehaviour
 
 
 
+
     private void CheckCountOfSegments()
     {
-        if (transform.childCount - 1 > segmentObjects.Count)
-        {
-            foreach(Transform child in transform)
-            {
-                if(child.TryGetComponent<CubeInfo>(out CubeInfo ci))segmentObjects.Add(child.gameObject);
-            }
-        }
-
-
+        segmentObjects = new List<GameObject>();
         if (segmentObjects.Count < segments.Count)
         {
+
+            if (transform.childCount > 1)
+            {
+                foreach (Transform child in transform)
+                {
+                    if (child.TryGetComponent<CubeInfo>(out CubeInfo ci)) segmentObjects.Add(child.gameObject);
+                }
+            }
+
             for (int i = segmentObjects.Count; i < segments.Count; i++)
             {
                 var newSegmentObject = Instantiate(segmentPrefab, transform);
